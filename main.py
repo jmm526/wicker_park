@@ -1,8 +1,10 @@
 import config
 from flask import Flask,redirect,request
+from flask_cors import CORS
 import requests
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 def hello_world():
