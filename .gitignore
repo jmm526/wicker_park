@@ -20,6 +20,7 @@ docs/_build/
 .vs/
 __pycache__/
 venv/
+.gcloudignore
 
 # Coverage reports
 htmlcov/
