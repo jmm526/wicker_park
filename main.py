@@ -3,6 +3,8 @@ from flask import Flask,redirect,request
 from flask_cors import CORS
 import requests
 
+from auth.main import auth_api
+
 app = Flask(__name__)
 CORS(app)
 
@@ -10,29 +12,7 @@ CORS(app)
 def hello_world():
     return 'Hello, World!!'
 
-@app.route('/getTokens', methods=['POST'])
-def success():
-    authCode = request.form.get('code', '')
-    payload = {
-        'grant_type': 'authorization_code',
-        'code': authCode,
-        'redirect_uri': 'spotify-ios-quick-start://spotify-login-callback',
-        'client_id': config.spotify['CLIENT_ID'],
-        'client_secret': config.spotify['CLIENT_SECRET']
-    }
-    res = requests.post('https://accounts.spotify.com/api/token', data=payload)
-    return res.json()
-
-# @app.route('/auth')
-# def auth():
-#     payload = {
-#         'client_id': config.spotify['CLIENT_ID'],
-#         'response_type': 'code',
-#         'redirect_uri': 'http://localhost:5000/success',
-#         'scopes': 'user-read-private user-read-email'
-#     }
-#     res = requests.get('https://accounts.spotify.com/authorize', params=payload)
-#     return redirect(res.url, code=302)
+app.register_blueprint(auth_api, url_prefix='/auth')
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
@@ -42,4 +22,4 @@ if __name__ == '__main__':
     # the "static" directory. See:
     # http://flask.pocoo.org/docs/1.0/quickstart/#static-files. Once deployed,
     # App Engine itself will serve those files as configured in app.yaml.
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    app.run(host='127.0.0.1', port=8080, debug=True)
