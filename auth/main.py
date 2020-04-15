@@ -9,7 +9,7 @@ def getCode():
     payload = {
         'client_id': config.spotify['CLIENT_ID'],
         'response_type': 'code',
-        'redirect_uri': 'http://127.0.0.1:8080/auth/getTokens',
+        'redirect_uri': f'{config.URL}/auth/getTokens',
         'scopes': 'user-read-private user-read-email'
     }
     res = requests.get('https://accounts.spotify.com/authorize', params=payload)
@@ -21,7 +21,7 @@ def getTokens():
     payload = {
         'grant_type': 'authorization_code',
         'code': authCode,
-        'redirect_uri': 'http://127.0.0.1:8080/auth/getTokens',
+        'redirect_uri': f'{config.URL}/auth/getTokens',
         'client_id': config.spotify['CLIENT_ID'],
         'client_secret': config.spotify['CLIENT_SECRET']
     }
