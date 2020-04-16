@@ -26,6 +26,8 @@ def createApp():
 
     app.register_blueprint(auth_api, url_prefix='/auth')
 
+    print("suh dude")
+
     return app
 
 if __name__ == '__main__':
