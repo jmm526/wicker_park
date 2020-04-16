@@ -2,6 +2,7 @@ runtime: python37
 
 env_variables:
   BUCKET_NAME: "example-gcs-bucket"
+  APP_ENV: "Production"
 
 handlers:
 # Matches requests to /images/... to files in static/images/...
