@@ -3,6 +3,6 @@ steps:
   args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/quickstart-image', '.' ]
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['app', 'deploy']
-  timeout: '1600s'
+  timeout: '540s'
 images:
 - 'gcr.io/$PROJECT_ID/quickstart-image'
