@@ -22,7 +22,7 @@ def createApp():
 
     @app.route('/')
     def hello_world():
-        return 'Hello, World!!'
+        return 'Hi, World!!'
 
     app.register_blueprint(auth_api, url_prefix='/auth')
 

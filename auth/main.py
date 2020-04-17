@@ -14,8 +14,7 @@ def getCode():
         'scopes': 'user-read-private user-read-email'
     }
     res = requests.get('https://accounts.spotify.com/authorize', params=payload)
-    # return redirect(res.url, code=302)
-    return res.url
+    return redirect(res.url, code=302)
 
 @auth_api.route('/getTokens', methods=['GET'])
 def getTokens():

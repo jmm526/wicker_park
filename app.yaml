@@ -1,7 +1,8 @@
-runtime: python37
+runtime: custom
+env: flex
 
 env_variables:
-  BUCKET_NAME: "example-gcs-bucket"
+  BUCKET_NAME: "wicker-park-gcs-bucket"
   APP_ENV: "Production"
 
 handlers:
