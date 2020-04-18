@@ -1,6 +1,6 @@
 runtime: custom
 env: flex
-entrypoint: gunicorn -b :$PORT main:app
+entrypoint: gunicorn -b :$PORT app/main:app
 
 env_variables:
   BUCKET_NAME: "wicker-park-gcs-bucket"
