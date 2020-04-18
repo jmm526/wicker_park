@@ -7,7 +7,7 @@ steps:
   - 'deploy'
   - 'quickstart-image'
   - '--image'
-  - 'gcr.io/$PROJECT_ID/quickstart-image:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/quickstart-image:latest'
   - '--region'
   - 'us-central1'
   - '--platform'
