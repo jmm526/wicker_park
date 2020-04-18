@@ -26,8 +26,7 @@ RUN pip3 install gunicorn
 #RUN pip3 install -r /app/requirements.txt
 
 # Add the application source code.
-WORKDIR /app
-ADD . /app
+ADD . /
 
 # Run a WSGI server to serve the application. gunicorn must be declared as
 # a dependency in requirements.txt.
