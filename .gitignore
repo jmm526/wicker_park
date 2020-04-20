@@ -22,7 +22,6 @@ __pycache__/
 venv/
 .gcloudignore
 *wicker-park-secrets-cred.json
-*
 
 # Coverage reports
 htmlcov/
