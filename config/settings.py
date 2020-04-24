@@ -21,7 +21,7 @@ class DevConfig(BaseConfig):
 
 class ProductionConfig(BaseConfig):
     FLASK_ENV = 'production'
-    URL = 'https://iconic-hue-273619.appspot.com'
+    URL = 'https://wicker-park-dot-iconic-hue-273619.appspot.com'
     USERS_COLLECTION_ID = getSecret('USERS_COLLECTION_ID_PRODUCTION')
 
 
