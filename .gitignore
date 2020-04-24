@@ -22,6 +22,7 @@ __pycache__/
 venv/
 .gcloudignore
 *wicker-park-secrets-cred.json
+iconic-hue-273619-firebase-adminsdk-vomu4-f1c9d6a6bb.json
 
 # Coverage reports
 htmlcov/
