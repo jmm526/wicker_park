@@ -6,6 +6,9 @@ import logging
 import os
 
 from auth.main import auth_api
+from api.main import api_routes
+from api.db.main import user_routes
+from api.spotify.main import spotify_routes
 
 logging.basicConfig(level=logging.DEBUG,
                    format='[%(asctime)s]: {} %(levelname)s %(message)s'.format(os.getpid()),
@@ -18,13 +21,17 @@ def createApp():
 
     app = Flask(__name__)
     CORS(app)
-    logger.info(f'Starting app in {config.APP_ENV} environment')
+    logger.info(f'App running in {config.APP_ENV} environment')
 
     @app.route('/')
     def hello_world():
         return 'Hi, World!!'
 
+    # TODO: create model for nested blueprints
     app.register_blueprint(auth_api, url_prefix='/auth')
+    app.register_blueprint(api_routes, url_prefix='/api')
+    app.register_blueprint(user_routes, url_prefix='/api/users')
+    app.register_blueprint(spotify_routes, url_prefix='/api/spotify')
 
     return app
 
