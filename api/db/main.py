@@ -22,7 +22,7 @@ else:
     #
     # credentials = mock.Mock(spec=google.auth.credentials.Credentials)
     # db = firestore.Client(project="test", credentials=credentials)
-    cred = credentials.Certificate('iconic-hue-273619-firebase-adminsdk-vomu4-f1c9d6a6bb.json')
+    cred = credentials.Certificate('iconic-hue-273619-firebase-adminsdk-vomu4-c773532c36.json')
     initialize_app(cred)
     db = firestore.Client()
 
