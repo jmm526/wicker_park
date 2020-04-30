@@ -38,7 +38,7 @@ def getUser():
     else:
         return "User not found.", 404
 
-@user_routes.route('/createUser', methods=['POST'])
+@user_routes.route('/createUser', methods=['POST', 'OPTIONS'])
 def createUser():
     try:
         authCode = request.form.get('code', '')
@@ -88,7 +88,7 @@ def updateUser():
     except Exception as e:
         return f"An Error Occured: {e}"
 
-@user_routes.route('/updateFollowing', methods=['POST'])
+@user_routes.route('/updateFollowing', methods=['POST', 'OPTIONS'])
 def updatePlayback():
     try:
         userId = request.form.get('id')
@@ -101,6 +101,5 @@ def updatePlayback():
         response = make_response(json.dumps({'success': True}))
         response.headers['Access-Control-Allow-Origin'] = '*'
         return response
-        return
     except Exception as e:
         return f"An Error Occured: {e}"
