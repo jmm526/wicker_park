@@ -74,10 +74,11 @@ def createUser():
             'created_at': datetime.datetime.now().strftime('%Y-%d-%mT%H:%M:%S')
         })
         response = make_response(json.dumps({'id': userRef.id}))
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        return response
     except Exception as e:
-        return f"An Error Occured: {e}"
+        print(e)
+        response = make_response(f"An Error Occured: {e}")
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
 @user_routes.route('/updateUser', methods=['PUT', 'POST'])
 def updateUser():
@@ -99,7 +100,9 @@ def updatePlayback():
             payload = {'id': doc.id, 'access_token': data['spotify_access_token'], 'refresh_token': data['spotify_refresh_token']}
             requests.get(f'{config.URL}{config.API_PREFIX}/spotify/me/playback', params=payload)
         response = make_response(json.dumps({'success': True}))
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        return response
+
     except Exception as e:
-        return f"An Error Occured: {e}"
+        print(e)
+        response = make_response(f"An Error Occured: {e}")
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
