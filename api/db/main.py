@@ -8,6 +8,7 @@ import google.auth.credentials
 import json
 import requests
 import datetime
+from flask_cors import CORS
 
 
 if config.APP_ENV == 'Production':
@@ -27,6 +28,7 @@ else:
     db = firestore.Client()
 
 user_routes = Blueprint('user_routes', __name__)
+CORS(user_routes)
 
 usersRef = db.collection(config.USERS_COLLECTION_ID)
 
