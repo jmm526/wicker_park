@@ -8,6 +8,7 @@ import google.auth.credentials
 import json
 import requests
 import datetime
+from flask_cors import CORS
 
 
 if config.APP_ENV == 'Production':
@@ -27,6 +28,7 @@ else:
     db = firestore.Client()
 
 user_routes = Blueprint('user_routes', __name__)
+CORS(user_routes)
 
 usersRef = db.collection(config.USERS_COLLECTION_ID)
 
@@ -38,7 +40,7 @@ def getUser():
     else:
         return "User not found.", 404
 
-@user_routes.route('/createUser', methods=['POST'])
+@user_routes.route('/createUser', methods=['POST', 'OPTIONS'])
 def createUser():
     try:
         authCode = request.form.get('code', '')
@@ -69,18 +71,36 @@ def createUser():
             'spotify_auth_code': authCode,
             'spotify_id': user['id'],
             'spotify_display_name': user['display_name'],
+            'spotify_profile_picture': user['images'][0]['url'] if user['images'] else None,
             'spotify_refresh_token': tokens['refresh_token'],
             'created_at': datetime.datetime.now().strftime('%Y-%d-%mT%H:%M:%S')
         })
         return json.dumps({'id': userRef.id})
     except Exception as e:
+        print(e)
         return f"An Error Occured: {e}"
 
 @user_routes.route('/updateUser', methods=['PUT', 'POST'])
 def updateUser():
     try:
         userId = request.args.get('id')
-        usersRef.document(userId).update(request.form)
+        usersRef.document(userId).update(request.get_json())
         return json.dumps({'success': True})
     except Exception as e:
+        return f"An Error Occured: {e}"
+
+@user_routes.route('/updateFollowing', methods=['POST', 'OPTIONS'])
+def updatePlayback():
+    try:
+        userId = request.form.get('id')
+        followingRef = usersRef.where("followers", "array_contains", userId)
+        docs = followingRef.stream()
+        for doc in docs:
+            data = doc.to_dict()
+            payload = {'id': doc.id, 'access_token': data['spotify_access_token'], 'refresh_token': data['spotify_refresh_token']}
+            requests.get(f'{config.URL}{config.API_PREFIX}/spotify/me/playback', params=payload)
+        return json.dumps({'success': True})
+
+    except Exception as e:
+        print(e)
         return f"An Error Occured: {e}"
