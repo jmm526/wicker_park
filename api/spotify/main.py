@@ -31,7 +31,11 @@ def getMe():
 @spotify_routes.route('/me/playback', methods=['GET'])
 def getPlayback():
     try:
-        user_id, access_token, refresh_token = parseUserTokens(request)
+        envelope = json.loads(request.data.decode('utf-8'))
+        payload = base64.b64decode(envelope['message']['data'])
+        print(payload)
+
+        user_id, access_token, refresh_token = parseUserTokens(payload, None, None)
 
         headers = {'Authorization': f'Bearer {access_token}'}
         params = {'additional_types': 'episode'}
@@ -76,7 +80,7 @@ def updatePlayback():
     try:
         userId = request.args.get('user_id')
         future = publisher.publish(
-            topic_path, data={'user_id': userId}.encode("utf-8")  # data must be a bytestring.
+            topic_path, data=userId.encode("utf-8")  # data must be a bytestring.
         )
         return "In Progress"
     except Exception as e:
@@ -98,10 +102,7 @@ def refreshToken(refreshToken, userId = None):
         print(e)
         return f"An Error Occured: {e}"
 
-def parseUserTokens(request):
-    user_id = request.args.get('id')
-    access_token = request.args.get('access_token')
-    refresh_token = request.args.get('refresh_token')
+def parseUserTokens(user_id, access_token, refresh_token):
     assert user_id or (access_token and refresh_token), "Request must include either User ID or access and refresh tokens"
     if not access_token or not refresh_token:
         userRes = requests.get(f'{config.URL}{config.API_PREFIX}/users/getUser', params={'id': userId})
