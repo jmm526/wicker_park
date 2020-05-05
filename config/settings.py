@@ -10,6 +10,7 @@ class BaseConfig():
         'CLIENT_SECRET': getSecret('SPOTIFY_CLIENT_SECRET'),
     }
     FIRESTORE_KEY = getSecret('FIRESTORE_KEY')
+    PROJECT_ID = getSecret('PROJECT_ID')
 
 
 class DevConfig(BaseConfig):

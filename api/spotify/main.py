@@ -2,34 +2,13 @@ from flask import Blueprint,request
 import config
 import requests
 import json
+import base64
+from google.cloud import pubsub_v1
 
 spotify_routes = Blueprint('spotify_routes', __name__)
 
-def parseUserTokens(request):
-    user_id = request.args.get('id')
-    access_token = request.args.get('access_token')
-    refresh_token = request.args.get('refresh_token')
-    assert user_id or (access_token and refresh_token), "Request must include either User ID or access and refresh tokens"
-    if not access_token or not refresh_token:
-        userRes = requests.get(f'{config.URL}{config.API_PREFIX}/users/getUser', params={'id': userId})
-        user = userRes.json()
-        access_token = user['spotify_access_token']
-        refresh_token = user['spotify_refresh_token']
-    return user_id, access_token, refresh_token
-
-def parseSpotifyPlayback(data):
-    item = data.get('item', data.get('track'))
-    return {
-        'id': item.get('id'),
-        'track_name': item.get('name'),
-        'artist_name': ", ".join([i['name'] for i in item.get('artists')]) if
-        'artists' in item else item.get('show', {}).get('publisher'),
-        'is_playing': data.get('is_playing', False),
-        'is_active': data.get('is_playing') is not None,
-        'progress_ms': data.get('progress_ms'),
-        'duration_ms': item.get('duration_ms'),
-        'played_at': data.get('played_at')
-    } if item else None
+publisher = pubsub_v1.PublisherClient()
+topic_path = publisher.topic_path(config.PROJECT_ID, 'get-playback')
 
 @spotify_routes.route('/me', methods=['GET'])
 def getMe():
@@ -78,6 +57,29 @@ def getPlayback():
         requests.post(f'{config.URL}{config.API_PREFIX}/users/updateUser', params=updateArgs, json=updatePayload)
         return json.dumps(updatePayload)
     except Exception as e:
+        return f"An Error Occured: {e}"
+
+@spotify_routes.route('/dummy', methods=['POST'])
+def dummy():
+    try:
+        envelope = json.loads(request.data.decode('utf-8'))
+        payload = base64.b64decode(envelope['message']['data'])
+        print(payload)
+
+        # Returning any 2xx status indicates successful receipt of the message.
+        return 'OK', 200
+    except Exception as e:
+        return f"An Error Occured: {e}"
+
+@spotify_routes.route('/update', methods=['PUT'])
+def updatePlayback():
+    try:
+        userId = request.args.get('user_id')
+        future = publisher.publish(
+            topic_path, data={'user_id': userId}.encode("utf-8")  # data must be a bytestring.
+        )
+        return "In Progress"
+    except Exception as e:
         print(e)
         return f"An Error Occured: {e}"
 
@@ -95,3 +97,29 @@ def refreshToken(refreshToken, userId = None):
     except Exception as e:
         print(e)
         return f"An Error Occured: {e}"
+
+def parseUserTokens(request):
+    user_id = request.args.get('id')
+    access_token = request.args.get('access_token')
+    refresh_token = request.args.get('refresh_token')
+    assert user_id or (access_token and refresh_token), "Request must include either User ID or access and refresh tokens"
+    if not access_token or not refresh_token:
+        userRes = requests.get(f'{config.URL}{config.API_PREFIX}/users/getUser', params={'id': userId})
+        user = userRes.json()
+        access_token = user['spotify_access_token']
+        refresh_token = user['spotify_refresh_token']
+    return user_id, access_token, refresh_token
+
+def parseSpotifyPlayback(data):
+    item = data.get('item', data.get('track'))
+    return {
+        'id': item.get('id'),
+        'track_name': item.get('name'),
+        'artist_name': ", ".join([i['name'] for i in item.get('artists')]) if
+        'artists' in item else item.get('show', {}).get('publisher'),
+        'is_playing': data.get('is_playing', False),
+        'is_active': data.get('is_playing') is not None,
+        'progress_ms': data.get('progress_ms'),
+        'duration_ms': item.get('duration_ms'),
+        'played_at': data.get('played_at')
+    } if item else None
